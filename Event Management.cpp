@@ -26,19 +26,19 @@ struct Events{
 	
 	void userOptions(){
 		
-		if (hasData()){
+		//since I have not yet coded the inside of each option I will comment the if-else statement needed for the options as of now
+		
+		//if (hasData()){
 			
 			int n;
 			
 			do {
 				
-				showDirectory();
-				
             cout << endl << endl << "There are existing events, what would you like to do with it?" << endl << endl;
             cout << "1. Add" << endl;
             cout << "2. Edit" << endl;
             cout << "3. Delete" << endl;
-            cout << "4. Search" << endl << endl;
+            cout << "4. Search" << endl;
             cout << "5. Directory" << endl << endl;
             cout << "Please enter desired number: ";
             cin >> n;
@@ -46,7 +46,7 @@ struct Events{
             if (cin.fail() || n < 1 || n > 5) {
                 cin.clear();  // Clear error flag
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
-                cout << "Invalid Input. Please enter a number between 1 and 4." << endl;
+                cout << "Invalid Input. Please enter a number between 1 and 5." << endl;
             }
         } while (n < 1 || n > 5);
         
@@ -54,26 +54,33 @@ struct Events{
         	
         	case 1:
         		addData();
+        		userOptions();
         		break;
         	case 2:
         		editData();
+        		userOptions();
         		break;
         	case 3: 
         		deleteData();
+        		userOptions();
         		break;
         	case 4:
         		searchData();
+        		userOptions();
         		break;
         	case 5: 
         		showDirectory();
+        		userOptions();
         		break;
 		}
 		
 		
-		} else{
+		/*} else{
+			
+			cout << "There is no data in the directory yet.";
 			
 			addData();
-		}
+		}*/
 		
 
 	
@@ -81,11 +88,15 @@ struct Events{
 	
 	void addData(){
 		
+		cout << endl << "Adding Data" << endl;
+		
 		//put code here for adding data
 		
 	}
 	
 	void editData(){
+		
+		cout << endl << "Editing Data" << endl;
 		
 		//put code here for editing the data
 		
@@ -93,17 +104,23 @@ struct Events{
 	
 	void deleteData(){
 		
+		cout << endl << "Deleting Data" << endl;
+		
 		//put code here for deleting data
 		
 	}
 	
 	void searchData(){
 		
+		cout << endl << "Searching Data" << endl;
+		
 		//put code here for searching
 		
 	}
 		
 	void showDirectory(){
+		
+		cout << endl << "Show Data" << endl;
 		
 		//put code here for showing the directory
 		
