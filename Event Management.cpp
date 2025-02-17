@@ -2,7 +2,11 @@
 
 using namespace std;
 
-//Event Management/Directory
+/*Event Management/Directory - in progress
+
+1st Week - User options
+
+*/
 
 struct Events{
 	
@@ -15,11 +19,6 @@ struct Events{
     return !title.empty() && !date.empty() && !tag.empty() && !org.empty();
 }
 	
-	void showDirectory(){
-		
-	}
-	
-	
 	void userOptions(){
 		
 		if hasData(){
@@ -27,12 +26,15 @@ struct Events{
 			int n;
 			
 			do {
+				
+				showDirectory();
+				
             cout << endl << endl << "There are existing events, what would you like to do with it?" << endl << endl;
-            cout << "1. Search" << endl;
-            cout << "2. Add" << endl;
+            cout << "1. Add" << endl;
+            cout << "2. Edit" << endl;
             cout << "3. Delete" << endl;
-            cout << "4. Data List" << endl << endl;
-            cout << "5. Edit" << endl << endl;
+            cout << "4. Search" << endl << endl;
+            cout << "5. Directory" << endl << endl;
             cout << "Please enter desired number: ";
             cin >> n;
 
@@ -42,9 +44,64 @@ struct Events{
                 cout << "Invalid Input. Please enter a number between 1 and 4." << endl;
             }
         } while (n < 1 || n > 4);
+        
+        switch (n){
+        	
+        	case 1:
+        		addData();
+        		break;
+        	case 2:
+        		editData();
+        		break;
+        	case 3: 
+        		deleteData();
+        		break;
+        	case 4:
+        		searchData();
+        		break;
+        	case 5: 
+        		showDirectory();
+        		break;
 		}
+		
+		
+		} else{
+			
+			addData();
+		}
+		
 
 	
+	}
+	
+	void addData(){
+		
+		//put code here for adding data
+		
+	}
+	
+	void editData(){
+		
+		//put code here for editing the data
+		
+	}
+	
+	void deleteData(){
+		
+		//put code here for deleting data
+		
+	}
+	
+	void searchData(){
+		
+		//put code here for searching
+		
+	}
+		
+	void showDirectory(){
+		
+		//put code here for showing the directory
+		
 	}
 }
 
@@ -52,7 +109,13 @@ struct Events{
 
 int main(){
 	
+	int n;
+	
 	cout << "Event Management/Directory" << endl;
+	
+	Events event;
+	
+	event.option();
 	
 	
 	
