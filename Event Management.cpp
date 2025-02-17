@@ -1,4 +1,9 @@
 #include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>  // For setw()
+#include <algorithm>  // For transform
+#include <cctype>     // For tolower
 
 using namespace std;
 
@@ -21,7 +26,7 @@ struct Events{
 	
 	void userOptions(){
 		
-		if hasData(){
+		if (hasData()){
 			
 			int n;
 			
@@ -38,12 +43,12 @@ struct Events{
             cout << "Please enter desired number: ";
             cin >> n;
 
-            if (cin.fail() || n < 1 || n > 4) {
+            if (cin.fail() || n < 1 || n > 5) {
                 cin.clear();  // Clear error flag
                 cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Discard invalid input
                 cout << "Invalid Input. Please enter a number between 1 and 4." << endl;
             }
-        } while (n < 1 || n > 4);
+        } while (n < 1 || n > 5);
         
         switch (n){
         	
@@ -103,7 +108,7 @@ struct Events{
 		//put code here for showing the directory
 		
 	}
-}
+};
 
 
 
@@ -115,9 +120,9 @@ int main(){
 	
 	Events event;
 	
-	event.option();
+	event.userOptions();
 	
-	
+	return 0;
 	
 	
 }
