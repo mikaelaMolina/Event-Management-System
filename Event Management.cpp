@@ -4,6 +4,7 @@
 #include <iomanip>  // For setw()
 #include <algorithm>  // For transform
 #include <cctype>     // For tolower
+#include <windows.h>
 
 using namespace std;
 
@@ -40,7 +41,10 @@ struct Events{
             cout << "3. Delete" << endl;
             cout << "4. Search" << endl;
             cout << "5. Directory" << endl << endl;
-            cout << "Please enter desired number: ";
+            
+            asciiBorder();
+            
+            cout << endl << "Please enter desired number: ";
             cin >> n;
 
             if (cin.fail() || n < 1 || n > 5) {
@@ -88,42 +92,78 @@ struct Events{
 	
 	void addData(){
 		
+		asciiBorder();
+		
 		cout << endl << "Adding Data" << endl;
 		
 		//put code here for adding data
+		
+		asciiBorder();
+		
 		
 	}
 	
 	void editData(){
 		
+		asciiBorder();
+		
 		cout << endl << "Editing Data" << endl;
 		
 		//put code here for editing the data
+		
+		asciiBorder();
+		
+
 		
 	}
 	
 	void deleteData(){
 		
+		asciiBorder();
+		
 		cout << endl << "Deleting Data" << endl;
 		
 		//put code here for deleting data
+		
+		asciiBorder();
+		
 		
 	}
 	
 	void searchData(){
 		
+		asciiBorder();
+		
 		cout << endl << "Searching Data" << endl;
 		
-		//put code here for searching
+		//put code here for showing the directory
+		
+		asciiBorder();
+		
 		
 	}
 		
 	void showDirectory(){
 		
+		asciiBorder();
+		
 		cout << endl << "Show Data" << endl;
 		
 		//put code here for showing the directory
 		
+		asciiBorder();
+		
+		
+	}
+	
+	void asciiBorder(){
+		
+			cout << endl;
+		for (int i = 0; i < 63; i++) {
+    	cout << "■";
+	}
+		cout << endl;
+
 	}
 };
 
@@ -131,11 +171,15 @@ struct Events{
 
 int main(){
 	
+	SetConsoleOutputCP(CP_UTF8);
+	
 	int n;
 	
-	cout << "Event Management/Directory" << endl;
+	cout << endl << "EVENT MANAGEMENT/DIRECTORY" << endl;
 	
 	Events event;
+	
+	event.asciiBorder();
 	
 	event.userOptions();
 	
