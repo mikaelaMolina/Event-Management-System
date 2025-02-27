@@ -12,7 +12,7 @@ using namespace std;
 
 1st Week - User options
 
-2nd Week -  View Directory (Think of something else to add)
+2nd Week -  View Directory (Think of something else to add) - let's try using database
 
 */
 
