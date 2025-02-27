@@ -12,6 +12,8 @@ using namespace std;
 
 1st Week - User options
 
+2nd Week -  View Directory (Think of something else to add)
+
 */
 
 struct Events{
@@ -40,11 +42,11 @@ struct Events{
             cout << "2. Edit" << endl;
             cout << "3. Delete" << endl;
             cout << "4. Search" << endl;
-            cout << "5. Directory" << endl << endl;
+            cout << "5. View Directory" << endl << endl;
             
             asciiBorder();
             
-            cout << endl << "Please enter desired number: ";
+            cout << endl << "Please enter desired action: ";
             cin >> n;
 
             if (cin.fail() || n < 1 || n > 5) {
@@ -149,7 +151,7 @@ struct Events{
 		
 		cout << endl << "Show Data" << endl;
 		
-		//put code here for showing the directory
+		//put code here for showing the directory - 2nd week
 		
 		asciiBorder();
 		
@@ -175,11 +177,13 @@ int main(){
 	
 	int n;
 	
-	cout << endl << "EVENT MANAGEMENT/DIRECTORY" << endl;
+	cout << endl << "WELCOME TO THE EVENT MANAGEMENT/DIRECTORY" << endl;
 	
 	Events event;
 	
 	event.asciiBorder();
+	
+	//call event directory
 	
 	event.userOptions();
 	
