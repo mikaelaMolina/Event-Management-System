@@ -109,6 +109,9 @@ struct Events { //using struct, user-defined structure
     }
 
 void userOptions() {
+	
+	asciiBorder();
+	
     if (hasData()) {
         rearrangeIDs();
         int n;
@@ -194,12 +197,10 @@ void userOptions() {
     if (mysql_query(obj, query.c_str())) {
         cout << "ERROR: Could not insert data." << endl;
             asciiBorder();
-        system("pause");
         cout << mysql_error(obj) << endl;
     } else {
         cout << "Data added successfully!" << endl;
             asciiBorder();
-        system("pause");
     }
     
     system("pause");
@@ -436,8 +437,7 @@ int main() {
     if (!event.initDatabase()) {
         return 1; // Exit if the database connection fails
     }
-
-    event.asciiBorder();
+    
     event.userOptions();
 
     // Close the database connection when done
