@@ -1,13 +1,13 @@
 #include <iostream>
-#include <mysql.h>
-#include <mysqld_error.h>
+#include <mysql.h> // MySQL C API
+#include <mysqld_error.h> // MySQL error handling
 #include <vector>
 #include <string>
-#include <iomanip>
+#include <iomanip> // for setw
 #include <algorithm>
 #include <cctype>
-#include <windows.h>
-#include <limits>
+#include <windows.h> // Windows-specific functions (e.g., clearing console)
+#include <limits> // Numeric limits for input validation
 
 /*Event Management/Directory - in progress
 
@@ -28,6 +28,8 @@ char USER[] = "root";
 char PASS[] = "";
 char DB[] = "eventDirectory";
 
+//Database name is eventDirectory, table name is events
+
 struct Events { //using struct, user-defined structure
 	
 	//these are vectors for the data
@@ -37,10 +39,12 @@ struct Events { //using struct, user-defined structure
     vector<string> tag;
     vector<string> org;
 
-    MYSQL* obj; // Database connection object
+    MYSQL* obj; // MySQL connection object (pointer)
 
     // this part is to initialize the database connection, making sure that the database has connected
     bool initDatabase() { //will indicate whether true or false
+    	
+    	// Initialize MySQL object
     	
         obj = mysql_init(0);
         
@@ -50,6 +54,8 @@ struct Events { //using struct, user-defined structure
             return false;
             
         }
+        
+        // Connect to database server: host, user, password, database name, port
 
         if (!mysql_real_connect(obj, HOST, USER, PASS, DB, 3306, NULL, 0)) {
         	
@@ -58,7 +64,7 @@ struct Events { //using struct, user-defined structure
             return false;
             
         }
-        return true;
+        return true; // Successful connection
     }
 
     // to close the database connection
@@ -67,7 +73,7 @@ struct Events { //using struct, user-defined structure
     	
         if (obj) {
         	
-            mysql_close(obj);
+            mysql_close(obj); // Close connection
             cout << "Database connection closed." << endl;
             
         }
@@ -77,7 +83,8 @@ struct Events { //using struct, user-defined structure
     
     bool hasData() {
     	
-        if (mysql_query(obj, "SELECT COUNT(*) FROM events")) {
+    	// Query to count total records
+        if (mysql_query(obj, "SELECT COUNT(*) FROM events")) { //if query fails it will display error
         	
             cout << "ERROR: Could not execute query." << endl;
             cout << mysql_error(obj) << endl;
@@ -85,24 +92,27 @@ struct Events { //using struct, user-defined structure
             
         }
 
-        MYSQL_RES* result = mysql_store_result(obj);
-        if (!result) {
+        MYSQL_RES* result = mysql_store_result(obj); //once the query succeeds the result of the query will be stored in the initialized result here
+        
+		if (!result) { //error if there's no result
+		
             cout << "ERROR: Could not store result." << endl;
             cout << mysql_error(obj) << endl;
             return false;
-        }
-
-        MYSQL_ROW row = mysql_fetch_row(result);
-        
-        if (row && row[0]) {
-        	
-            int count = atoi(row[0]);
-            mysql_free_result(result);
-            return count > 0;
             
         }
 
-        mysql_free_result(result);
+        MYSQL_ROW row = mysql_fetch_row(result); //fetches first row of the result
+        
+        if (row && row[0]) {
+        	
+            int count = atoi(row[0]); //If the row is valid and row[0] exists, it converts that string into an integer using atoi()
+            mysql_free_result(result); //count is the actual number of records in my table here
+            return count > 0; //returns true if count is greater than 0
+            
+        }
+
+        mysql_free_result(result); //free memory
         
         return false;
         
@@ -113,8 +123,11 @@ void userOptions() {
 	asciiBorder();
 	
     if (hasData()) {
-        rearrangeIDs();
+    	
+        rearrangeIDs(); //function to rearrange new_id based on the dates, this will automatically be called every time userOptions is called
+        
         int n;
+        
         do {
 
             
@@ -141,44 +154,54 @@ void userOptions() {
 
         switch (n) {
             case 1:
+            	
                 addData();
                 userOptions();
                 break;
+                
             case 2:
+            	
                 editData();
                 userOptions();
                 break;
+                
             case 3:
+            	
                 deleteData();
                 userOptions();
                 break;
+                
             case 4:
+            	
                 searchData();
                 userOptions();
                 break;
+                
             case 5:
+            	
                 showDirectory();
                 userOptions();
                 break;
+                
         }
     } else {
+    	
         cout << "There is no data in the directory yet.";
         addData();
+        
     }
 }
 
 
     void addData() {
-    
-    	
     	
     asciiBorder();
 
-    string title, date, tag, org;
+    string title, date, tag, org; 
 
     cout << "Enter Title: ";
 
-    if (cin.peek() == '\n') cin.ignore(); // Clear leftover newline only if it exists
+    if (cin.peek() == '\n') cin.ignore(); // Clear leftover newline only if it exists (ensures that the first letter is not erased as it usually happens with cin.ignore)
     getline(cin, title); // Now reads correctly
 
     cout << "Enter Date (YYYY-MM-DD): ";
@@ -192,25 +215,35 @@ void userOptions() {
 
     // Insert data into the database
     string query = "INSERT INTO events (title, date, tag, org) VALUES ('" +
-                   title + "', '" + date + "', '" + tag + "', '" + org + "')";
+                   title + "', '" + date + "', '" + tag + "', '" + org + "')"; //MySQL query for inserting the inputted data into the database
 
+	//error handling incase query fails
+	
     if (mysql_query(obj, query.c_str())) {
+    	
         cout << "ERROR: Could not insert data." << endl;
             asciiBorder();
+            
         cout << mysql_error(obj) << endl;
+        
     } else {
+    	
         cout << "Data added successfully!" << endl;
             asciiBorder();
+            
     }
     
-    system("pause");
+    system("pause"); //pauses the screen before the clearing of the console
     
     system("cls");
     
-    userOptions();
+    userOptions(); //calls userOptions again
+    
     }
 
     void editData() {
+    	
+    	//currently coding
     	
         asciiBorder();
         //cout << endl << "Editing Data" << endl;
@@ -260,13 +293,15 @@ void deleteData() {
     MYSQL_RES* result;
     MYSQL_ROW row;
 
-    if (mysql_query(obj, "SELECT new_id, title, date, tag, org FROM events ORDER BY new_id ASC")) {
+    if (mysql_query(obj, "SELECT new_id, title, date, tag, org FROM events ORDER BY new_id ASC")) { //sql query to retrieve the events from the database table, otherwise displays an error message
+    	
         cout << "ERROR: Could not execute query." << endl;
         cout << mysql_error(obj) << endl;
         return;
+        
     }
 
-    result = mysql_store_result(obj);
+    result = mysql_store_result(obj); //Stores the query result and prepares a vector<int> to keep track of valid IDs for verification later
 
     vector<int> eventIDs;
 
@@ -281,44 +316,62 @@ void deleteData() {
     asciiBorder();
 
     // Display event details
-    while ((row = mysql_fetch_row(result))) {
+    while ((row = mysql_fetch_row(result))) { //iterates to each row to display the values
+    	
         int id = atoi(row[0]); // Convert new_id to integer
         eventIDs.push_back(id);
+        
         cout << left << setw(5) << id  // new_id
              << setw(40) << (row[1] ? row[1] : "NULL")  // Title
              << setw(15) << (row[2] ? row[2] : "NULL")  // Date
              << setw(20) << (row[3] ? row[3] : "NULL")  // Tag
              << setw(20) << (row[4] ? row[4] : "NULL")  // Org
              << endl;
+             
     }
 
     asciiBorder();
+    
     mysql_free_result(result);
 
     int eventID;
+    
     cout << "Enter the ID of the event you wish to delete: ";
     cin >> eventID;
 
     // Check if the entered ID exists
     if (find(eventIDs.begin(), eventIDs.end(), eventID) == eventIDs.end()) {
+    	
         cout << "Invalid ID. Returning to menu..." << endl;
         return;
+        
     }
 
     cout << "Are you sure you want to delete this event? (y/n): ";
+    
     char confirm;
+    
     cin >> confirm;
 
     if (tolower(confirm) == 'y') {
+    	
         string query = "DELETE FROM events WHERE new_id = " + to_string(eventID);
+        
         if (mysql_query(obj, query.c_str())) {
+        	
             cout << "ERROR: Could not delete the event." << endl;
             cout << mysql_error(obj) << endl;
+            
         } else {
+        	
             cout << "Event deleted successfully!" << endl;
+            
         }
+        
     } else {
+    	
         cout << "Deletion cancelled." << endl;
+        
     }
 
     asciiBorder();
@@ -332,17 +385,83 @@ void deleteData() {
 
     void searchData() {
     	
-    	system("cls");
+    system("cls");
+
+    asciiBorder();
+    
+    cout << "\nSearch Events by Title\n";
+    
+    asciiBorder();
+
+    cout << "Enter keyword to search in titles: ";
+    string keyword;
+    if (cin.peek() == '\n') cin.ignore(); // clear newline
+    getline(cin, keyword);
+
+    if (keyword.empty()) {
     	
-    	
-        asciiBorder();
-        cout << endl << "Searching Data" << endl;
-        //put code here for showing the directory
-        asciiBorder();
-        
+        cout << "No keyword entered. Returning to menu..." << endl;
         system("pause");
-        
         system("cls");
+        return;
+        
+    }
+
+    // Construct SQL query with LIKE operator for partial matches
+    string query = "SELECT new_id, title, date, tag, org FROM events "
+                   "WHERE title LIKE '%" + keyword + "%' ORDER BY new_id ASC";
+
+    if (mysql_query(obj, query.c_str())) {
+        cout << "ERROR: Could not execute search query." << endl;
+        cout << mysql_error(obj) << endl;
+        return;
+    }
+
+    MYSQL_RES* result = mysql_store_result(obj);
+    
+    MYSQL_ROW row;
+
+    int numRows = mysql_num_rows(result);
+
+    if (numRows == 0) {
+    	
+        cout << "\nNo events found with keyword: \"" << keyword << "\"" << endl;
+        
+    } else {
+    	
+        cout << "\nFound " << numRows << " event(s) matching \"" << keyword << "\":" << endl;
+
+        asciiBorder();
+
+        cout << left << setw(5) << "ID"
+             << setw(40) << "Title"
+             << setw(15) << "Date"
+             << setw(20) << "Tag"
+             << setw(20) << "Org"
+             << endl;
+
+        asciiBorder();
+
+        while ((row = mysql_fetch_row(result))) {
+        	
+            cout << left << setw(5) << (row[0] ? row[0] : "NULL")
+                 << setw(40) << (row[1] ? row[1] : "NULL")
+                 << setw(15) << (row[2] ? row[2] : "NULL")
+                 << setw(20) << (row[3] ? row[3] : "NULL")
+                 << setw(20) << (row[4] ? row[4] : "NULL")
+                 << endl;
+                 
+        }
+
+        asciiBorder();
+    }
+
+    mysql_free_result(result);
+
+    system("pause");
+    system("cls");
+        
+        
     }
 
     void asciiBorder() {
@@ -354,29 +473,38 @@ void deleteData() {
     }
     
 void rearrangeIDs() {
+	
     // Reset new_id counter
+    
     if (mysql_query(obj, "SET @new_id = 0")) {
+    	
         cout << "ERROR: Could not reset new_id counter." << endl;
         cout << mysql_error(obj) << endl;
         return;
+        
     }
 
     // Update new_id column, ordering by latest date first
+    
     string updateQuery = "UPDATE events "
                          "SET new_id = (@new_id := @new_id + 1) "
                          "ORDER BY date DESC";
+                         
 
     if (mysql_query(obj, updateQuery.c_str())) {
+    	
         cout << mysql_error(obj) << endl;
+        
     } else {
+    	
     }
+    
 }
 
 
 void showDirectory() {
-	
-	system("cls");
-	
+
+    system("cls");
 	
     MYSQL_RES* result;
     MYSQL_ROW row;
@@ -445,3 +573,37 @@ int main() {
 
     return 0;
 }
+
+/*
+
+Query notes for MySQL:
+
+mysql_query(obj, query.c_str()): Executes SQL query.
+mysql_store_result(obj): Stores the result of a query (used in SELECT).
+mysql_fetch_row(result): Fetches one row at a time from the result set.
+mysql_free_result(result): Frees memory after done. - a good practice
+
+
+SELECT COUNT(*) FROM events                       -- Checks if any data exists in events table.
+INSERT INTO events (...) VALUES (...)             -- Adds new event data into the table.
+SELECT new_id, title, date, ...                   -- Fetch and display events from the database.
+DELETE FROM events WHERE new_id = x               -- Deletes a specific event by ID.
+UPDATE events SET new_id = ...                    -- Reassigns IDs based on order (for sorting).
+SET @new_id = 0                                   -- Resets the counter used for reassigning new_id.
+
+SELECT * FROM table_name;                         -- Get all rows and columns
+SELECT column1, column2 FROM table_name;          -- Get specific columns
+SELECT * FROM table_name WHERE condition;         -- Filter data
+SELECT * FROM events ORDER BY date DESC;          -- Sort results
+SELECT DISTINCT column FROM table_name;           -- Unique values only
+
+INSERT INTO table_name (col1, col2) VALUES ('val1', 'val2');
+
+UPDATE table_name SET column1 = 'value' WHERE condition;
+
+DELETE FROM table_name WHERE condition;
+
+SHOW TABLES;                                     -- List tables in DB
+DESCRIBE events;                                 -- Table structure
+
+*/
