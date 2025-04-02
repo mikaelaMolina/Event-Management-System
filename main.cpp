@@ -17,6 +17,8 @@
 
 3rd Week - Delete from the directory
 
+4th Week - Searching
+
 */
 
 using namespace std;
@@ -79,8 +81,7 @@ struct Events { //using struct, user-defined structure
         }
     }
 
-    // Check if there is data in the database
-    
+    // Checks if there is data in the database
     bool hasData() {
     	
     	// Query to count total records
@@ -118,7 +119,8 @@ struct Events { //using struct, user-defined structure
         
     }
 
-void userOptions() {
+	//Displays options for users and prompts them to choose an option
+	void userOptions() {
 	
 	asciiBorder();
 	
@@ -192,7 +194,7 @@ void userOptions() {
     }
 }
 
-
+	//Adding data into the database
     void addData() {
     	
     asciiBorder();
@@ -241,6 +243,7 @@ void userOptions() {
     
     }
 
+	//Editing data
     void editData() {
     	
     	//currently coding
@@ -282,7 +285,8 @@ void userOptions() {
         
     }
 
-void deleteData() {
+	//Deleting data
+	void deleteData() {
 	
 	system("cls");
 	
@@ -381,36 +385,64 @@ void deleteData() {
     system("cls");
 }
 
-
-
+	//Searching for the data - very messy right now
     void searchData() {
     	
     system("cls");
 
     asciiBorder();
     
-    cout << "\nSearch Events by Title\n";
+    int n;
+    
+    do{    
+    cout << endl << "What category would you like to search for?" << endl;
     
     asciiBorder();
+    
+    cout << endl << "1. Title" << endl << "2. Tag" << endl << "3. Organization" << endl;
+    
+    asciiBorder();
+    
+    cout << "Enter your desired choice: ";
+    cin >> n;
+    
+    asciiBorder();
+    
+    if (cin.fail() || n < 1 || n > 3) {
+                cin.clear();
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+                cout << "Invalid Input. Please enter a number between 1 and 3." << endl;
+                system("pause"); // Wait for user input before clearing
+            }
+    
+} while(n<1 || n>3);
 
-    cout << "Enter keyword to search in titles: ";
-    string keyword;
-    if (cin.peek() == '\n') cin.ignore(); // clear newline
-    getline(cin, keyword);
+	string keyword;
+	
+	if(n==1){
+		
+		cout << endl << "Search Events by Title" << endl;
+    
+    		asciiBorder();
 
-    if (keyword.empty()) {
+    		cout << "Enter keyword to search in titles: ";
+    		
+    		if (cin.peek() == '\n') cin.ignore(); // clear newline
+    		getline(cin, keyword);
+    		
+    		if (keyword.empty()) {
     	
-        cout << "No keyword entered. Returning to menu..." << endl;
-        system("pause");
-        system("cls");
-        return;
-        
-    }
-
-    // Construct SQL query with LIKE operator for partial matches
-    string query = "SELECT new_id, title, date, tag, org FROM events "
-                   "WHERE title LIKE '%" + keyword + "%' ORDER BY new_id ASC";
-
+        	cout << "No keyword entered. Returning to menu..." << endl;
+        	system("pause");
+        	system("cls");
+        	return;
+        	}
+    		
+    		// Construct SQL query with LIKE operator for partial matches
+    		string query = "SELECT new_id, title, date, tag, org FROM events "
+                   		"WHERE title LIKE '%" + keyword + "%' ORDER BY new_id ASC";
+        	
+        	
     if (mysql_query(obj, query.c_str())) {
         cout << "ERROR: Could not execute search query." << endl;
         cout << mysql_error(obj) << endl;
@@ -455,15 +487,176 @@ void deleteData() {
 
         asciiBorder();
     }
+    
+	
+
+    mysql_free_result(result);
+
+    system("pause");
+    system("cls");
+                   
+		
+	} else if(n == 2){
+		
+		
+    		cout << endl << "Search Events by Tag" << endl;
+    		
+    		asciiBorder();
+    		
+    		cout << "Enter keyword to search in tags: ";
+    		
+    		if (cin.peek() == '\n') cin.ignore();
+    		getline(cin, keyword);
+    		
+    		if (keyword.empty()) {
+    	
+        	cout << "No keyword entered. Returning to menu..." << endl;
+        	system("pause");
+        	system("cls");
+        	return;
+        	}
+        	
+    		
+    		// Construct SQL query with LIKE operator for partial matches
+    		string query = "SELECT new_id, title, date, tag, org FROM events "
+                   		"WHERE tag LIKE '%" + keyword + "%' ORDER BY new_id ASC";
+                   		
+        	
+    if (mysql_query(obj, query.c_str())) {
+        cout << "ERROR: Could not execute search query." << endl;
+        cout << mysql_error(obj) << endl;
+        return;
+    }
+
+    MYSQL_RES* result = mysql_store_result(obj);
+    
+    MYSQL_ROW row;
+
+    int numRows = mysql_num_rows(result);
+
+    if (numRows == 0) {
+    	
+        cout << "\nNo events found with keyword: \"" << keyword << "\"" << endl;
+        
+    } else {
+    	
+        cout << "\nFound " << numRows << " event(s) matching \"" << keyword << "\":" << endl;
+
+        asciiBorder();
+
+        cout << left << setw(5) << "ID"
+             << setw(40) << "Title"
+             << setw(15) << "Date"
+             << setw(20) << "Tag"
+             << setw(20) << "Org"
+             << endl;
+
+        asciiBorder();
+
+        while ((row = mysql_fetch_row(result))) {
+        	
+            cout << left << setw(5) << (row[0] ? row[0] : "NULL")
+                 << setw(40) << (row[1] ? row[1] : "NULL")
+                 << setw(15) << (row[2] ? row[2] : "NULL")
+                 << setw(20) << (row[3] ? row[3] : "NULL")
+                 << setw(20) << (row[4] ? row[4] : "NULL")
+                 << endl;
+                 
+        }
+
+        asciiBorder();
+    }
+    
+	
 
     mysql_free_result(result);
 
     system("pause");
     system("cls");
         
-        
+	} else if(n == 3){
+		
+		
+    		cout << endl << "Search Events by Organization" << endl;
+    		
+    		asciiBorder();
+    		
+    		cout << "Enter keyword to search in organizations: ";
+    		
+    		if(cin.peek() == '\n') cin.ignore();
+    		getline(cin, keyword);
+    		
+    		if (keyword.empty()) {
+    	
+        	cout << "No keyword entered. Returning to menu..." << endl;
+        	system("pause");
+        	system("cls");
+        	return;
+        	}
+    		
+    		// Construct SQL query with LIKE operator for partial matches
+    		string query = "SELECT new_id, title, date, tag, org FROM events "
+                   		"WHERE org LIKE '%" + keyword + "%' ORDER BY new_id ASC";
+                   		
+            
+            
+    if (mysql_query(obj, query.c_str())) {
+        cout << "ERROR: Could not execute search query." << endl;
+        cout << mysql_error(obj) << endl;
+        return;
     }
 
+    MYSQL_RES* result = mysql_store_result(obj);
+    
+    MYSQL_ROW row;
+
+    int numRows = mysql_num_rows(result);
+
+    if (numRows == 0) {
+    	
+        cout << "\nNo events found with keyword: \"" << keyword << "\"" << endl;
+        
+    } else {
+    	
+        cout << "\nFound " << numRows << " event(s) matching \"" << keyword << "\":" << endl;
+
+        asciiBorder();
+
+        cout << left << setw(5) << "ID"
+             << setw(40) << "Title"
+             << setw(15) << "Date"
+             << setw(20) << "Tag"
+             << setw(20) << "Org"
+             << endl;
+
+        asciiBorder();
+
+        while ((row = mysql_fetch_row(result))) {
+        	
+            cout << left << setw(5) << (row[0] ? row[0] : "NULL")
+                 << setw(40) << (row[1] ? row[1] : "NULL")
+                 << setw(15) << (row[2] ? row[2] : "NULL")
+                 << setw(20) << (row[3] ? row[3] : "NULL")
+                 << setw(20) << (row[4] ? row[4] : "NULL")
+                 << endl;
+                 
+        }
+
+        asciiBorder();
+    }
+    
+	
+
+    mysql_free_result(result);
+
+    system("pause");
+    system("cls");
+    		
+	}
+
+    }
+
+	//Decorative purpose - so the code has uniform decoration 
     void asciiBorder() {
         cout << endl;
         for (int i = 0; i < 115; i++) {
@@ -472,7 +665,8 @@ void deleteData() {
         cout << endl;
     }
     
-void rearrangeIDs() {
+    //Rearranging IDs based on date
+	void rearrangeIDs() {
 	
     // Reset new_id counter
     
@@ -501,8 +695,8 @@ void rearrangeIDs() {
     
 }
 
-
-void showDirectory() {
+	//displays the current directory
+	void showDirectory() {
 
     system("cls");
 	
@@ -555,6 +749,7 @@ void showDirectory() {
 };
 
 int main() {
+	
     SetConsoleOutputCP(CP_UTF8);
 
     cout << endl << "                                   WELCOME TO THE EVENT MANAGEMENT/DIRECTORY" << endl;
