@@ -183,9 +183,8 @@ struct Events { //using struct, user-defined structure
                 cout << "3. Delete Event" << endl;
                 cout << "4. Search Event" << endl;
                 cout << "5. View Directory" << endl;
-                /*cout << "6. Export Events" << endl;
-                cout << "7. Event Statistics" << endl; */
-                cout << "6. Exit Program" << endl << endl;
+                cout << "6. Export Events" << endl;
+                cout << "7. Exit Program" << endl << endl;
 
                 asciiBorder();
                 
@@ -207,15 +206,13 @@ struct Events { //using struct, user-defined structure
                     case 5:
                         showDirectory();
                         break;
-                    /*case 7:
-                        exportEvents();
-                        break;
-                    case 8:
-                        showEventStatistics();
-                        break;*/
-                    case 6:
+					case 7:
                         cout << "Exiting program. Thank you for using the Event Management System!" << endl;
                         return;
+					case 6:
+                        exportEvents();
+                        break;
+                    
                 }
                 
                 // Only reached if option 8 was not selected
@@ -835,7 +832,6 @@ struct Events { //using struct, user-defined structure
         system("pause");
     }
     
-    /*NEW FEATURE: Export events to a file
     void exportEvents() {
         displayHeader("EXPORT EVENTS");
         
@@ -915,27 +911,6 @@ struct Events { //using struct, user-defined structure
         system("pause");
     }
     
-    // NEW FEATURE: Event statistics
-    void showEventStatistics() {
-        displayHeader("EVENT STATISTICS");
-        
-        // Get total count
-        if (mysql_query(obj, "SELECT COUNT(*) FROM events")) {
-            displayError("Could not retrieve event count.");
-            system("pause");
-            return;
-        }
-        
-        MYSQL_RES* result = mysql_store_result(obj);
-        MYSQL_ROW row = mysql_fetch_row(result);
-        
-        int totalEvents = atoi(row[0]);
-        cout << "Total Events: " << totalEvents << endl << endl;
-        
-        system("pause");
-        
-        mysql_free_result(result);
-}*/
 
 
 };
